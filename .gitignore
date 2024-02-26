@@ -1,4 +1,5 @@
-test.py
+/API/test.py
+/API/chakera.py
 **/*.TIF
 **/*.TIF.aux.xml
 **/images

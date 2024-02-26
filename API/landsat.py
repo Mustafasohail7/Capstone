@@ -54,7 +54,7 @@ def Landsat(baseUrl,datasetName):
         returnMessage['message'] = msg
         return returnMessage
 
-    scenes = api.sceneSearch(6, 1, spatialFilter_geojson, acquisitionFilter)
+    scenes = api.sceneSearch(1, 1, spatialFilter_geojson, acquisitionFilter)
 
     if scenes['recordsReturned'] == 0:
         returnMessage['message'] = "No scenes found"
@@ -80,7 +80,7 @@ def Landsat(baseUrl,datasetName):
                 "entityId": product['entityId'],
                 "productId": product['id']
             })
-        
+
     if not downloads:
         returnMessage['message'] = "No products available to download right now"
         return returnMessage
@@ -93,11 +93,21 @@ def Landsat(baseUrl,datasetName):
         returnMessage['message'] = "No download options found"
         return returnMessage
 
-    print("Requested downloads: ", requestResults)
+    # print("Requested downloads: ", requestResults)
 
+    downloadLinks = dict()
     for download in requestResults['availableDownloads']:
-        print(download)
-        # print("DOWNLOAD:\n" + download['url']) 
+        # print(download)
+        name = download['url'].split('/')[-1].split('?')[0]
+        if name in downloadLinks:
+            downloadLinks[name].append(download['url'])
+        else:
+            downloadLinks[name] = [download['url']]
+        
+    for i in downloadLinks:
+        dprint("Download options for ",i)
+        for idx,j in enumerate(downloadLinks[i]):
+            dprint(str(idx+1)+")",j)
 
     returnMessage['succes'] = True
     return returnMessage
