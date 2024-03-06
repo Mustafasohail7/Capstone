@@ -18,6 +18,8 @@ scenes = api.search(
 
 print(f"{len(scenes)} scenes found.")
 
+print(scenes)
+
 # Process the result
 for scene in scenes:
     print(scene['acquisition_date'].strftime('%Y-%m-%d'))
@@ -26,10 +28,12 @@ for scene in scenes:
     with open(fname, "w") as f:
         json.dump(scene['spatial_coverage'].__geo_interface__, f)
 
+print(scene)
+
 api.logout()
 
 ee = EarthExplorer('MurtazaAliKhokhar', 'fLZEwWdaE|e78_S')
 
-ee.download('LC08_L2SP_152043_20240215_20240223_02_T1', output_dir='./data')
+# ee.download('LC08_L2SP_152043_20240215_20240223_02_T1', output_dir='./data')
 
 ee.logout()

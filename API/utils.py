@@ -87,11 +87,13 @@ class utils:
 
     def downloadRequest(self,downloads,label):
         url = self.baseUrl + "download-request"
-        print(downloads)
-        print(label)
+        # print(downloads)
+        # print(label)
+
         payload = {
             "downloads": downloads,
             "label": label
         }
-
-        return self.sendRequest(url, payload)
+        x = self.sendRequest(url, payload)
+        # print("return from utils",x)
+        return x
