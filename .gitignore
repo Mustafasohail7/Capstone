@@ -1,5 +1,6 @@
 /API/test.py
-/API/chakera.py
+/API/downloads/
+/API/data/
 **/*.TIF
 **/*.TIF.aux.xml
 **/images

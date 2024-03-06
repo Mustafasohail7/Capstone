@@ -1,75 +1,20 @@
 import utils as ut
 import datetime
-import json
-from tqdm import tqdm
 import requests
 import os
 from landsatxplore.api import API
-from landsatxplore.earthexplorer import EarthExplorer
 
+download_directory = ("downloads/{image_name}")
 
 def Landsat(baseUrl,datasetName):
-    '''
-
-    spatialFilter_mbr =  {'filterType' : "mbr",
-                      'lowerLeft' : {'latitude' : 60, 'longitude' : -50},
-                      'upperRight' : { 'latitude' : 65, 'longitude' : -45}}
-    
-    spatialFilter_geojson = {'filterType' : "geojson",
-                             'geoJson': {
-                                 'type': "polygon",
-                                 'coordinates': [[
-                                     [32.78,72.76],
-                                     [32.80,75.23],
-                                     [30.66,72.81],
-                                     [30.68,75.22],
-                                     [32.78,72.76]
-                                 ]]
-                             },
-    }
-
-    acquisitionFilter = {
-        "start": "2020-01-01",
-        "end": "2020-12-31"
-    }
 
     returnMessage = {
         'succes':False,
         'message':""
     }
-                     
-    
-    
-    if token is None:
-        returnMessage['message'] = "Token Generation Failed"
-        return returnMessage
-    else:
-        dprint("Token Successfully Generated")
 
-    datasets = api.datasetSearch(datasetName)
-    datasetFound = False
-
-    for dataset in datasets:
-        if dataset['datasetAlias'] == datasetName:
-            dprint("Found dataset:", dataset['datasetAlias'])
-            datasetFound = True
-
-    if not datasetFound:
-        msg = "Dataset not found\n"
-        msg += "Other Datasets found\n"
-        for i in datasets:
-            msg += i['datasetAlias'] + "\n"
-        returnMessage['message'] = msg
-        return returnMessage
-
-    scenes = api.sceneSearch(1, 1, spatialFilter_geojson, acquisitionFilter)
-
-    if scenes['recordsReturned'] == 0:
-        returnMessage['message'] = "No scenes found"
-        return returnMessage
-    '''
     api = ut.utils(baseUrl,datasetName)
-    token = api.generateKey("musutfa","Playstore123$")
+    api.generateKey("musutfa","Playstore123$")
 
     # Initialize a new API instance and get an access key
     xplorer = API("MurtazaAliKhokhar", "fLZEwWdaE|e78_S")
@@ -91,21 +36,20 @@ def Landsat(baseUrl,datasetName):
     band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
     for scene in scenes:
         # print(scene)
-        for y in band_names:
-            x = "L2SR_"+scene['display_id']+y
+        for band in band_names:
+            scene_name = "L2SR_"+scene['display_id']+band
             # sceneIds.append(scene['display_id'])
-            sceneIds.append(x)
+            sceneIds.append(scene_name)
 
-    dprint("scene ids")
-    print(sceneIds)
+    # dprint("scene ids")
+    # print(sceneIds)
 
     downloadOptions = api.downloadOptions(sceneIds)
-    # print(downloadOptions)
 
     if not downloadOptions:
-        print("no")
-    #     returnMessage['message'] = "No download options found"
-    #     return returnMessage
+        returnMessage['message'] = "No download options found"
+        return returnMessage
+    
     
     dprint("Download options found")
 
@@ -117,67 +61,80 @@ def Landsat(baseUrl,datasetName):
                 "productId": product['id']
             })
 
-    # if not downloads:
-    #     returnMessage['message'] = "No products available to download right now"
-    #     return returnMessage
+    if not downloads:
+        returnMessage['message'] = "No products available to download right now"
+        return returnMessage
 
     dprint("Products available to download: ", len(downloads))
-    # print("here",downloads)
-    requestedDownloads = len(downloads)
-    # print("downloads",downloads)
+
     label = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     requestResults = api.downloadRequest(downloads, label)
-    # if not requestResults['availableDownloads']:
-    #     returnMessage['message'] = "No download options found"
-    #     return returnMessage
+    if not requestResults['availableDownloads']:
+        returnMessage['message'] = "No download options found"
+        return returnMessage
 
-    # print("Requested downloads: ", requestResults)
+    # print(len(sceneIds))
+    # print(len(int(requestResults['availableDownloads'])/2))
+
+    if len(sceneIds) == int(len(requestResults['availableDownloads'])/2):
+        print("mappable")
+
+    newResults = []
+    for idx,download in enumerate(requestResults['availableDownloads']):
+        newObj = {**download, 'name': sceneIds[idx//2]}
+        newResults.append(newObj)
+
+    # for i in newResults:
+    #     print(i)
 
     downloadLinks = dict()
-    print(len(requestResults['availableDownloads']))
-    for download in requestResults['availableDownloads']:
-        print(download)
-        # name = download['url'].split('/')[-1].split('?')[0]
-        id = download['downloadId']
-        if id in downloadLinks:
-            downloadLinks[id].append(download['url'])
+    for download in newResults:
+        name = download['name']
+        if name in downloadLinks:
+            downloadLinks[name].append(download['url'])
         else:
-            downloadLinks[id] = [download['url']]
+            downloadLinks[name] = [download['url']]
         
     # print(downloadLinks)
     for i in downloadLinks:
-        dprint("Download options for ",i)
-        for idx,j in enumerate(downloadLinks[i]):
-            dprint(str(idx+1)+")",j)
+        downloaded = False
+        for j in downloadLinks[i]:
+            url = j
+            if not downloaded:
+                downloaded = downloadFile(url,i)
 
-    for idx,i in enumerate(downloadLinks):
-        if idx==0:
-            url = downloadLinks[i][0]
-            downloadFile(url,i)
-    # returnMessage['succes'] = True
-    # return returnMessage
+    returnMessage['succes'] = True
+    return returnMessage
 
 def dprint(*args):
     print(*args)
     print("--------------------------")
 
-def downloadFile(
-        url, name, timeout=300, chunk_size=1024, skip=False, overwrite=False
-    ):
+def downloadFile(url, name):
     
-        download_directory = "downloads/"
+        n = name.split('_')
+        short_name = '_'.join(n[1:7 + 1])
 
-        if not os.path.exists(download_directory):
-            os.makedirs(download_directory)
+        dir = download_directory.format(image_name=short_name)
+        # print(dir)
+        if not os.path.exists(dir):
+            os.makedirs(dir)
 
-        output_file = os.path.join(download_directory, str(name))
+        output_file = os.path.join(dir, str(name))
+        # print(output_file)
 
         with requests.session() as session:
             response = session.get(url)
             if response.status_code == 200:
-                with open(output_file, 'wb') as f:
-                    f.write(response.content)
-                print("File downloaded successfully.")
+                if not os.path.exists(output_file):
+                    with open(output_file, 'wb') as f:
+                        f.write(response.content)
+                    print("File downloaded successfully.")
+                    return True
+                else:
+                    print("File already exists.")
+                    return True
             else:
                 print("Failed to download the file.")
+                return False
         

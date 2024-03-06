@@ -87,6 +87,7 @@ class utils:
 
     def downloadRequest(self,downloads,label):
         url = self.baseUrl + "download-request"
+        # print("sending request with")
         # print(downloads)
         # print(label)
 

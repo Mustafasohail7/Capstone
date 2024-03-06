@@ -7,8 +7,8 @@ def main():
     # datasetName = "gls_all"
 
     landsat = Landsat(baseUrl,datasetName)
-    # if not landsat['succes']:
-    print("Error")
-    print(landsat['message'])
+    if not landsat['succes']:
+    # print("Error")
+        print(landsat['message'])
 
 main()
