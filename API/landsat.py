@@ -9,7 +9,7 @@ download_directory = ("downloads/{image_name}")
 def Landsat(baseUrl,datasetName):
 
     returnMessage = {
-        'succes':False,
+        'success':False,
         'message':""
     }
 
@@ -29,11 +29,11 @@ def Landsat(baseUrl,datasetName):
         max_cloud_cover=10
     )
 
-    print(f"{len(scenes)} scenes found.")
+    dprint(f"{len(scenes)} scenes found.")
 
     # dprint("Scenes found: ", scenes['recordsReturned'])
     sceneIds = []
-    band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
+    band_names = ["_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
     for scene in scenes:
         # print(scene)
         for band in band_names:
@@ -77,7 +77,10 @@ def Landsat(baseUrl,datasetName):
     # print(len(int(requestResults['availableDownloads'])/2))
 
     if len(sceneIds) == int(len(requestResults['availableDownloads'])/2):
-        print("mappable")
+        dprint("All downloads available")
+    else:
+        returnMessage['message'] = "Complete download options not found"
+        return returnMessage
 
     newResults = []
     for idx,download in enumerate(requestResults['availableDownloads']):
@@ -103,7 +106,7 @@ def Landsat(baseUrl,datasetName):
             if not downloaded:
                 downloaded = downloadFile(url,i)
 
-    returnMessage['succes'] = True
+    returnMessage['success'] = True
     return returnMessage
 
 def dprint(*args):
@@ -112,29 +115,33 @@ def dprint(*args):
 
 def downloadFile(url, name):
     
-        n = name.split('_')
-        short_name = '_'.join(n[1:7 + 1])
+    n = name.split('_')
+    short_name = '_'.join(n[1:8])
 
-        dir = download_directory.format(image_name=short_name)
-        # print(dir)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+    dir = download_directory.format(image_name=short_name)
 
-        output_file = os.path.join(dir, str(name))
-        # print(output_file)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
-        with requests.session() as session:
-            response = session.get(url)
-            if response.status_code == 200:
-                if not os.path.exists(output_file):
-                    with open(output_file, 'wb') as f:
-                        f.write(response.content)
-                    print("File downloaded successfully.")
-                    return True
-                else:
-                    print("File already exists.")
-                    return True
+    name = name[:-4]+'.TIF'
+
+    output_file = os.path.join(dir, str(name))
+    # print(output_file)
+
+    print("Downloading",name)
+
+    with requests.session() as session:
+        response = session.get(url)
+        if response.status_code == 200:
+            if not os.path.exists(output_file):
+                with open(output_file, 'wb') as f:
+                    f.write(response.content)
+                dprint("File downloaded successfully.")
+                return True
             else:
-                print("Failed to download the file.")
-                return False
+                dprint("File already exists.")
+                return True
+        else:
+            dprint("Failed to download the file.")
+            return False
         
