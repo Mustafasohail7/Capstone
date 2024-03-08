@@ -2,11 +2,12 @@ import utils as ut
 import datetime
 import requests
 import os
+import datetime
 from landsatxplore.api import API
 
 download_directory = ("downloads/{image_name}")
 
-def Landsat(baseUrl,datasetName):
+def Landsat(baseUrl,datasetName,lat,lon):
 
     returnMessage = {
         'success':False,
@@ -19,21 +20,21 @@ def Landsat(baseUrl,datasetName):
     # Initialize a new API instance and get an access key
     xplorer = API("MurtazaAliKhokhar", "fLZEwWdaE|e78_S")
 
-    # Search for Landsat TM scenes
+    # Search for Landsat TM scenes3 
     scenes = xplorer.search(
         dataset='landsat_ot_c2_l2',
-        latitude=24.55317,
-        longitude=67.53525,
-        start_date='2024-02-01',
+        latitude=lat,
+        longitude=lon,
+        start_date='2024-01-01',
         end_date='2024-03-01',
         max_cloud_cover=10
     )
 
-    dprint(f"{len(scenes)} scenes found.")
+    print(f"{len(scenes)} scenes found.")
 
     # dprint("Scenes found: ", scenes['recordsReturned'])
     sceneIds = []
-    band_names = ["_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
+    band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
     for scene in scenes:
         # print(scene)
         for band in band_names:
