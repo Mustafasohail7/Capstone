@@ -2,7 +2,7 @@ import utils as ut
 import datetime
 import requests
 import os
-import datetime
+from datetime import datetime
 from landsatxplore.api import API
 
 download_directory = ("downloads/{image_name}")
@@ -32,6 +32,17 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     print(f"{len(scenes)} scenes found.")
 
+    dates = []
+    for scene in scenes:
+        date_string = scene["display_id"].split('_')[4]
+        date_object = datetime.strptime(date_string, '%Y%m%d')
+        dates.append(date_object)
+        
+    latest_date = max(dates)
+    latest_date_idx = dates.index(latest_date)
+    scenes = [scenes[latest_date_idx]]
+    print(scenes)
+
     # dprint("Scenes found: ", scenes['recordsReturned'])
     sceneIds = []
     band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
@@ -42,8 +53,8 @@ def Landsat(baseUrl,datasetName,lat,lon):
             # sceneIds.append(scene['display_id'])
             sceneIds.append(scene_name)
 
-    # dprint("scene ids")
-    # print(sceneIds)
+    dprint("scene ids")
+    print(sceneIds)
 
     downloadOptions = api.downloadOptions(sceneIds)
 
@@ -68,7 +79,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     dprint("Products available to download: ", len(downloads))
 
-    label = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    label = datetime.now().strftime("%Y%m%d%H%M%S")
     requestResults = api.downloadRequest(downloads, label)
     if not requestResults['availableDownloads']:
         returnMessage['error'] = (2,"No download options found")
