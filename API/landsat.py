@@ -39,7 +39,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
         if scene['date_product_generated'] > latest_date:
             latest_date = scene['date_product_generated']
             latest_scene = scene
-    print(latest_date)
+    #print(latest_date)
     # dprint("Scenes found: ", scenes['recordsReturned'])
     sceneIds = []
     band_names = ["_SR_B7_TIF"]
