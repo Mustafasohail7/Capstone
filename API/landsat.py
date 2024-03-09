@@ -2,7 +2,6 @@ import utils as ut
 import datetime
 import requests
 import os
-from datetime import datetime
 from landsatxplore.api import API
 
 download_directory = ("downloads/{image_name}")
@@ -32,8 +31,8 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     print(f"{len(scenes)} scenes found.")
 
-    latest_date = None
-    latest_scene = datetime.datetime.min
+    latest_date = datetime.datetime.min
+    latest_scene = None
     for scene in scenes:
         if scene['date_product_generated'] > latest_date:
             latest_date = scene['date_product_generated']
