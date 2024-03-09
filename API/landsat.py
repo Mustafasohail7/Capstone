@@ -6,11 +6,11 @@ from landsatxplore.api import API
 
 download_directory = ("downloads/{image_name}")
 
-def Landsat(baseUrl,datasetName,lat,lon):
+def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
 
     returnMessage = {
         'success':False,
-        'error':tuple()
+        'error':(None,"")
     }
 
     api = ut.utils(baseUrl,datasetName)
@@ -24,8 +24,8 @@ def Landsat(baseUrl,datasetName,lat,lon):
         dataset='landsat_ot_c2_l2',
         latitude=lat,
         longitude=lon,
-        start_date='2024-01-01',
-        end_date='2024-03-01',
+        start_date=sdate,
+        end_date=edate,
         max_cloud_cover=10
     )
 
@@ -36,21 +36,19 @@ def Landsat(baseUrl,datasetName,lat,lon):
     for scene in scenes:
         if scene['date_product_generated'] > latest_date:
             latest_date = scene['date_product_generated']
-            latest_scene = scene
-    #print(latest_date)
-    # dprint("Scenes found: ", scenes['recordsReturned'])
+            latest_scene = [scene]
+
+    dprint("date chosen",latest_date)
+
     sceneIds = []
-    band_names = ["_SR_B7_TIF"]
+    band_names = ["_SR_B3_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
     #band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
-    for scene in scenes:
+    for scene in latest_scene:
         # print(scene)
         for band in band_names:
             scene_name = "L2SR_"+scene['display_id']+band
             # sceneIds.append(scene['display_id'])
             sceneIds.append(scene_name)
-
-    dprint("scene ids")
-    print(sceneIds)
 
     downloadOptions = api.downloadOptions(sceneIds)
 
@@ -75,7 +73,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     dprint("Products available to download: ", len(downloads))
 
-    label = datetime.now().strftime("%Y%m%d%H%M%S")
+    label = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     requestResults = api.downloadRequest(downloads, label)
     if not requestResults['availableDownloads']:
         returnMessage['error'] = (2,"No download options found")

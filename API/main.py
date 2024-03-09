@@ -4,12 +4,10 @@ def main():
 
     baseUrl = "https://m2m.cr.usgs.gov/api/api/json/stable/"
     datasetName = "landsat_band_files_c2_l2"
-    # datasetName = "gls_all"
 
-    # landsat = Landsat(baseUrl,datasetName)
-    # if not landsat['success']:
-    # # print("Error")
-    #     print(landsat['message'])
+    start_date = '2024-01-01'
+    end_date = '2024-03-01'
+
     file_path = 'co-ords.txt'
     coordinates = []
     with open(file_path, 'r') as file:
@@ -25,12 +23,12 @@ def main():
 
     for i in range(len(coordinates)):
         print("coordinate:",i+1,"out of",len(coordinates))
-        landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1])
+        landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1],start_date,end_date)
         retries = 1
 
         while landsat['error'][0] == 3 and retries<=3:
             retries+=1
-            landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1]) 
+            landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1],start_date,end_date) 
 
         if not landsat['success']:             
             print(landsat['message'])
