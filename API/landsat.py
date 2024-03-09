@@ -2,7 +2,7 @@ import utils as ut
 import datetime
 import requests
 import os
-import datetime
+from datetime import datetime
 from landsatxplore.api import API
 
 download_directory = ("downloads/{image_name}")
@@ -50,8 +50,8 @@ def Landsat(baseUrl,datasetName,lat,lon):
             # sceneIds.append(scene['display_id'])
             sceneIds.append(scene_name)
 
-    # dprint("scene ids")
-    # print(sceneIds)
+    dprint("scene ids")
+    print(sceneIds)
 
     downloadOptions = api.downloadOptions(sceneIds)
 
@@ -76,7 +76,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     dprint("Products available to download: ", len(downloads))
 
-    label = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    label = datetime.now().strftime("%Y%m%d%H%M%S")
     requestResults = api.downloadRequest(downloads, label)
     if not requestResults['availableDownloads']:
         returnMessage['error'] = (2,"No download options found")

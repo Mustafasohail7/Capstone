@@ -24,7 +24,7 @@ def main():
     #print(coordinates)
 
     for i in range(len(coordinates)):
-        print("coordinate:",i)
+        print("coordinate:",i+1,"out of",len(coordinates))
         landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1])
         retries = 1
 
