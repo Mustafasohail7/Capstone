@@ -32,17 +32,11 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     print(f"{len(scenes)} scenes found.")
 
-    dates = []
     for scene in scenes:
-        date_string = scene["display_id"].split('_')[4]
-        date_object = datetime.strptime(date_string, '%Y%m%d')
-        dates.append(date_object)
-        
-    latest_date = max(dates)
-    latest_date_idx = dates.index(latest_date)
-    scenes = [scenes[latest_date_idx]]
-    print(scenes)
-
+        if scene['date_product_generated'] > latest_date:
+            latest_date = scene['date_product_generated']
+            latest_scene = scene
+    #print(latest_date)
     # dprint("Scenes found: ", scenes['recordsReturned'])
     sceneIds = []
     band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
