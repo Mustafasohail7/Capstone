@@ -11,7 +11,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     returnMessage = {
         'success':False,
-        'message':""
+        'error':tuple()
     }
 
     api = ut.utils(baseUrl,datasetName)
@@ -48,7 +48,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
     downloadOptions = api.downloadOptions(sceneIds)
 
     if not downloadOptions:
-        returnMessage['message'] = "No download options found"
+        returnMessage['error'] = (0,"No download options found")
         return returnMessage
     
     
@@ -63,7 +63,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
             })
 
     if not downloads:
-        returnMessage['message'] = "No products available to download right now"
+        returnMessage['error'] = (1,"No products available to download right now")
         return returnMessage
 
     dprint("Products available to download: ", len(downloads))
@@ -71,7 +71,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
     label = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     requestResults = api.downloadRequest(downloads, label)
     if not requestResults['availableDownloads']:
-        returnMessage['message'] = "No download options found"
+        returnMessage['error'] = (2,"No download options found")
         return returnMessage
 
     # print(len(sceneIds))
@@ -80,7 +80,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
     if len(sceneIds) == int(len(requestResults['availableDownloads'])/2):
         dprint("All downloads available")
     else:
-        returnMessage['message'] = "Complete download options not found"
+        returnMessage['error'] = (3,"Complete download options not found")
         return returnMessage
 
     newResults = []
