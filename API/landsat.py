@@ -11,7 +11,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
 
     returnMessage = {
         'success':False,
-        'message':""
+        'error':tuple()
     }
 
     api = ut.utils(baseUrl,datasetName)
@@ -31,9 +31,6 @@ def Landsat(baseUrl,datasetName,lat,lon):
     )
 
     print(f"{len(scenes)} scenes found.")
-    
-    latest_scene = None
-    latest_date = datetime.datetime.min  # Set to the earliest possible date for comparison
 
     for scene in scenes:
         if scene['date_product_generated'] > latest_date:
@@ -42,12 +39,13 @@ def Landsat(baseUrl,datasetName,lat,lon):
     #print(latest_date)
     # dprint("Scenes found: ", scenes['recordsReturned'])
     sceneIds = []
-    band_names = ["_SR_B7_TIF"]
-    #band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
-    for band in band_names:
-        scene_name = "L2SR_"+latest_scene['display_id']+band
-        # sceneIds.append(scene['display_id'])
-        sceneIds.append(scene_name)
+    band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
+    for scene in scenes:
+        # print(scene)
+        for band in band_names:
+            scene_name = "L2SR_"+scene['display_id']+band
+            # sceneIds.append(scene['display_id'])
+            sceneIds.append(scene_name)
 
     # dprint("scene ids")
     # print(sceneIds)
@@ -55,7 +53,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
     downloadOptions = api.downloadOptions(sceneIds)
 
     if not downloadOptions:
-        returnMessage['message'] = "No download options found"
+        returnMessage['error'] = (0,"No download options found")
         return returnMessage
     
     
@@ -70,7 +68,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
             })
 
     if not downloads:
-        returnMessage['message'] = "No products available to download right now"
+        returnMessage['error'] = (1,"No products available to download right now")
         return returnMessage
 
     dprint("Products available to download: ", len(downloads))
@@ -78,14 +76,17 @@ def Landsat(baseUrl,datasetName,lat,lon):
     label = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     requestResults = api.downloadRequest(downloads, label)
     if not requestResults['availableDownloads']:
-        returnMessage['message'] = "No download options found"
+        returnMessage['error'] = (2,"No download options found")
         return returnMessage
 
     # print(len(sceneIds))
     # print(len(int(requestResults['availableDownloads'])/2))
 
     if len(sceneIds) == int(len(requestResults['availableDownloads'])/2):
-        print("mappable")
+        dprint("All downloads available")
+    else:
+        returnMessage['error'] = (3,"Complete download options not found")
+        return returnMessage
 
     newResults = []
     for idx,download in enumerate(requestResults['availableDownloads']):
@@ -111,7 +112,7 @@ def Landsat(baseUrl,datasetName,lat,lon):
             if not downloaded:
                 downloaded = downloadFile(url,i)
 
-    returnMessage['succes'] = True
+    returnMessage['success'] = True
     return returnMessage
 
 def dprint(*args):
@@ -120,29 +121,33 @@ def dprint(*args):
 
 def downloadFile(url, name):
     
-        n = name.split('_')
-        short_name = '_'.join(n[1:7 + 1])
+    n = name.split('_')
+    short_name = '_'.join(n[1:8])
 
-        dir = download_directory.format(image_name=short_name)
-        # print(dir)
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+    dir = download_directory.format(image_name=short_name)
 
-        output_file = os.path.join(dir, str(name))
-        # print(output_file)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
-        with requests.session() as session:
-            response = session.get(url)
-            if response.status_code == 200:
-                if not os.path.exists(output_file):
-                    with open(output_file, 'wb') as f:
-                        f.write(response.content)
-                    print("File downloaded successfully.")
-                    return True
-                else:
-                    print("File already exists.")
-                    return True
+    name = name[:-4]+'.TIF'
+
+    output_file = os.path.join(dir, str(name))
+    # print(output_file)
+
+    print("Downloading",name)
+
+    with requests.session() as session:
+        response = session.get(url)
+        if response.status_code == 200:
+            if not os.path.exists(output_file):
+                with open(output_file, 'wb') as f:
+                    f.write(response.content)
+                dprint("File downloaded successfully.")
+                return True
             else:
-                print("Failed to download the file.")
-                return False
+                dprint("File already exists.")
+                return True
+        else:
+            dprint("Failed to download the file.")
+            return False
         

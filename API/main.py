@@ -6,7 +6,11 @@ def main():
     datasetName = "landsat_band_files_c2_l2"
     # datasetName = "gls_all"
 
-    file_path = '.\co-ords.txt'
+    # landsat = Landsat(baseUrl,datasetName)
+    # if not landsat['success']:
+    # # print("Error")
+    #     print(landsat['message'])
+    file_path = 'co-ords.txt'
     coordinates = []
     with open(file_path, 'r') as file:
         for line in file:
@@ -20,10 +24,15 @@ def main():
     #print(coordinates)
 
     for i in range(len(coordinates)):
-        print(i)
+        print("coordinate:",i)
         landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1])
-        if not landsat['success']:
-        # print("Error")
+        retries = 1
+
+        while landsat['error'][0] == 3 and retries<=3:
+            retries+=1
+            landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1]) 
+
+        if not landsat['success']:             
             print(landsat['message'])
 
 main()
