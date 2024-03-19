@@ -1,12 +1,12 @@
 from landsat import Landsat
 
-def main():
+def main(start_date,end_date):
 
     baseUrl = "https://m2m.cr.usgs.gov/api/api/json/stable/"
     datasetName = "landsat_band_files_c2_l2"
 
-    start_date = '2024-01-01'
-    end_date = '2024-03-01'
+    # start_date = '2024-01-01'
+    # end_date = '2024-03-01'
 
     file_path = 'co-ords.txt'
     coordinates = []
