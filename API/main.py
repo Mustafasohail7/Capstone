@@ -1,14 +1,10 @@
-from landsat import Landsat
+from .landsat import Landsat
 
-def main(start_date,end_date):
+def main(start_date,end_date,file_path):
 
     baseUrl = "https://m2m.cr.usgs.gov/api/api/json/stable/"
     datasetName = "landsat_band_files_c2_l2"
 
-    # start_date = '2024-01-01'
-    # end_date = '2024-03-01'
-
-    file_path = 'co-ords.txt'
     coordinates = []
     with open(file_path, 'r') as file:
         for line in file:
@@ -33,4 +29,8 @@ def main(start_date,end_date):
         if not landsat['success']:             
             print(landsat['message'])
 
-main()
+start_date = '2024-01-01'
+end_date = '2024-03-01'
+file_path = 'co-ords.txt'
+if __name__ == "__main__":
+    main(start_date,end_date,file_path)
