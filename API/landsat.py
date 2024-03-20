@@ -1,4 +1,4 @@
-import utils as ut
+from .utils import utils 
 import datetime
 import requests
 import os
@@ -13,7 +13,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
         'error':(None,"")
     }
 
-    api = ut.utils(baseUrl,datasetName)
+    api = utils(baseUrl,datasetName)
     api.generateKey("musutfa","Playstore123$")
 
     # Initialize a new API instance and get an access key
