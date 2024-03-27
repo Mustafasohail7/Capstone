@@ -27,7 +27,7 @@ def main(start_date,end_date,file_path):
             landsat = Landsat(baseUrl,datasetName,coordinates[i][0],coordinates[i][1],start_date,end_date) 
 
         if not landsat['success']:             
-            print(landsat['message'])
+            print(landsat['error'][1])
 
 start_date = '2024-01-01'
 end_date = '2024-03-01'
