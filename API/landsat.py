@@ -135,12 +135,14 @@ def downloadFile(url, name):
     # print(output_file)
 
     print("Downloading",name)
-
+    print("testing")
     with requests.session() as session:
+        print("requesting session")
         print(url)
         response = session.get(url)
-        print(url)
+        print("got response")
         if response.status_code == 200:
+            print("downloading from here")
             if not os.path.exists(output_file):
                 with open(output_file, 'wb') as f:
                     f.write(response.content)

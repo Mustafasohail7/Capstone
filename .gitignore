@@ -5,3 +5,4 @@ downloads/
 **/*.TIF
 **/*.TIF.aux.xml
 **/images
+downloads/
