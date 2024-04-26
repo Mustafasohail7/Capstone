@@ -1,5 +1,6 @@
 /API/test.py
 /API/downloads/
+downloads/
 /API/data/
 **/*.TIF
 **/*.TIF.aux.xml
