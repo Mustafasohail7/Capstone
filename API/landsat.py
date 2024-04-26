@@ -1,4 +1,4 @@
-from .utils import utils 
+from utils import utils 
 import datetime
 import requests
 import os

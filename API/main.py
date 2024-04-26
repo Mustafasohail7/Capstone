@@ -1,4 +1,4 @@
-from .landsat import Landsat
+from landsat import Landsat
 
 def main(start_date,end_date,file_path):
 
