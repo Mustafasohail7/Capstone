@@ -6,3 +6,5 @@ downloads/
 **/*.TIF.aux.xml
 **/images
 downloads/
+API/__pycache__/landsat.cpython-311.pyc
+API/__pycache__/landsat.cpython-311.pyc
