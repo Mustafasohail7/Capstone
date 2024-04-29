@@ -1,4 +1,5 @@
 from landsat import Landsat
+import sys
 
 def main(start_date,end_date,file_path):
 
@@ -29,8 +30,13 @@ def main(start_date,end_date,file_path):
         if not landsat['success']:             
             print(landsat['error'][1])
 
-start_date = '2024-01-01'
-end_date = '2024-03-01'
-file_path = 'co-ords.txt'
+
 if __name__ == "__main__":
+    if len(sys.argv) > 4:
+        print("Usage: python main.py [<start_date>] [<end_date>] [<file_path>]")
+        sys.exit(1)
+
+    start_date = sys.argv[1] if len(sys.argv) > 1 else '2024-01-01'
+    end_date = sys.argv[2] if len(sys.argv) > 2 else '2024-03-01'
+    file_path = sys.argv[3] if len(sys.argv) > 3 else 'co-ords.txt'
     main(start_date,end_date,file_path)
