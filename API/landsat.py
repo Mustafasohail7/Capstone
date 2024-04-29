@@ -6,7 +6,7 @@ from landsatxplore.api import API
 
 download_directory = ("downloads/{image_name}")
 
-def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
+def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,band_names):
 
     returnMessage = {
         'success':False,
@@ -41,11 +41,15 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
     dprint("date chosen",latest_date)
 
     sceneIds = []
-    band_names = ["_SR_B3_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
-    #band_names = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
+    band_names_tif = []
+    for bn in band_names:
+        string = "_SR_B"+bn+"_TIF"
+        band_names_tif.append(string)
+    # band_names_tif = ["_SR_B3_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
+    #band_names_tif = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
     for scene in latest_scene:
         # print(scene)
-        for band in band_names:
+        for band in band_names_tif:
             scene_name = "L2SR_"+scene['display_id']+band
             # sceneIds.append(scene['display_id'])
             sceneIds.append(scene_name)
