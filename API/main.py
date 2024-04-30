@@ -1,11 +1,6 @@
 from landsat import Landsat
 import sys
 
-def clear_output():
-    # ANSI escape code to clear the screen
-    sys.stdout.write('\033[2J\033[H')
-    sys.stdout.flush()
-
 def main(start_date,end_date,file_path,bands):
 
     baseUrl = "https://m2m.cr.usgs.gov/api/api/json/stable/"
@@ -50,8 +45,6 @@ def main(start_date,end_date,file_path,bands):
 
         if not landsat['success']:             
             print(landsat['error'][1])
-        
-        clear_output()
 
     if len(failed)>0:
         print("Failed coordinates:",failed)
