@@ -62,8 +62,8 @@ if __name__ == "__main__":
         print("Usage: python main.py [<start_date>] [<end_date>] [<file_path>] [<bands>]")
         sys.exit(1)
 
-    start_date = sys.argv[1] if len(sys.argv) > 1 else '2024-01-01'
-    end_date = sys.argv[2] if len(sys.argv) > 2 else '2024-03-01'
-    file_path = sys.argv[3] if len(sys.argv) > 3 else 'API/co-ords.txt'
-    bands = sys.argv[4] if len(sys.argv) > 4 else '3,5,6,7'
+    bands = sys.argv[1] if len(sys.argv) > 1 else '3,5,6,7'
+    start_date = sys.argv[2] if len(sys.argv) > 2 else '2024-01-01'
+    end_date = sys.argv[3] if len(sys.argv) > 3 else '2024-03-01'
+    file_path = sys.argv[4] if len(sys.argv) > 4 else 'API/co-ords.txt'
     main(start_date,end_date,file_path,bands)
