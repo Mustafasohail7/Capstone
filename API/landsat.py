@@ -133,7 +133,9 @@ def downloadFile(url, name):
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-    name = name[:-4]+'.TIF'
+    tifless_name = name[:-4]
+    band = tifless_name[-2:]
+    name = band+'.TIF'
 
     output_file = os.path.join(dir, str(name))
     # print(output_file)

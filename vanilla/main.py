@@ -102,10 +102,10 @@ def open_image(image_path):
 def main(filepath_1,filepath_2,index,threshold):
     # blue_band = 2 
     if index==1:
-        swir1_band = f'{filepath_1}/band6.TIF'
-        swir12_band = f'{filepath_2}/band6.TIF'
-        swir2_band = f'{filepath_1}/band7.TIF'
-        swir22_band = f'{filepath_2}/band7.TIF'
+        swir1_band = f'{filepath_1}/B6.TIF'
+        swir12_band = f'{filepath_2}/B6.TIF'
+        swir2_band = f'{filepath_1}/B7.TIF'
+        swir22_band = f'{filepath_2}/B7.TIF'
 
         swir1 = open_image(swir1_band)
         swir12 = open_image(swir12_band)
@@ -120,10 +120,10 @@ def main(filepath_1,filepath_2,index,threshold):
         swir1,swir12 = same_resize(swir1,swir12)
         swir2,swir22 = same_resize(swir2,swir22)
 
-    green_band = f'{filepath_1}/band3.TIF'
-    green2_band = f'{filepath_2}/band3.TIF'
-    nir_band = f'{filepath_1}/band5.TIF'
-    nir2_band = f'{filepath_2}/band5.TIF'
+    green_band = f'{filepath_1}/B3.TIF'
+    green2_band = f'{filepath_2}/B3.TIF'
+    nir_band = f'{filepath_1}/B5.TIF'
+    nir2_band = f'{filepath_2}/B5.TIF'
 
     green = open_image(green_band)
     green2 = open_image(green2_band)
