@@ -2,46 +2,12 @@ import rasterio
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+import sys
 
 # Define the Landsat bands for NIR (Near Infrared) and SWIR (Shortwave Infrared)
 # For Landsat 8: NIR = band 5, SWIR = band 6
 # For Landsat 9: NIR = band 5, SWIR = band 7
-blue_band = 2 
-green_band = 'band_data/band3.TIF'
-green2_band = 'band_data/o_band3.TIF'
-red_band = 4
-nir_band = 'band_data/band5.TIF'
-nir2_band = 'band_data/o_band5.TIF'
-swir1_band = 'band_data/band6.TIF'
-swir12_band = 'band_data/o_band6.TIF'
-swir2_band = 'band_data/band7.TIF'
-swir22_band = 'band_data/o_band7.TIF'
 
-def open_image(image_path):
-    with rasterio.open(image_path) as src:
-        image = src.read(1)
-    return image
-
-green = open_image(green_band)
-green2 = open_image(green2_band)
-
-nir = open_image(nir_band)
-nir2 = open_image(nir2_band)
-
-swir1 = open_image(swir1_band)
-swir12 = open_image(swir12_band)
-
-swir2 = open_image(swir2_band)
-swir22 = open_image(swir22_band)
-
-green = green.astype(np.float32)
-nir = nir.astype(np.float32)
-swir1 = swir1.astype(np.float32)
-swir2 = swir2.astype(np.float32)
-green2 = green2.astype(np.float32)
-nir2 = nir2.astype(np.float32)
-swir12 = swir12.astype(np.float32)
-swir22 = swir22.astype(np.float32)
 
 def compute_ndwi(green, nir):
     """
@@ -128,26 +94,72 @@ def classify_image(ndwi1,ndwi2):
 
     return diff_image
 
-threshold = -25000
+def open_image(image_path):
+    with rasterio.open(image_path) as src:
+        image = src.read(1)
+    return image
 
-green,green2 = same_resize(green,green2)
-nir,nir2 = same_resize(nir,nir2)
-swir1,swir12 = same_resize(swir1,swir12)
-swir2,swir22 = same_resize(swir2,swir22)
+def main(filepath_1,filepath_2,index,threshold):
+    # blue_band = 2 
+    if index==1:
+        swir1_band = f'{filepath_1}/band6.TIF'
+        swir12_band = f'{filepath_2}/band6.TIF'
+        swir2_band = f'{filepath_1}/band7.TIF'
+        swir22_band = f'{filepath_2}/band7.TIF'
 
-# ndwi_1 = compute_ndwi(green, nir)
-# ndwi_2 = compute_ndwi(green2, nir2)
+        swir1 = open_image(swir1_band)
+        swir12 = open_image(swir12_band)
+        swir2 = open_image(swir2_band)
+        swir22 = open_image(swir22_band)
 
-aewi_1 = compute_aewi(green, nir, swir1, swir2)
-# visualize(aewi_1)
-aewi_2 = compute_aewi(green2, nir2, swir12, swir22)
+        swir1 = swir1.astype(np.float32)
+        swir2 = swir2.astype(np.float32)
+        swir12 = swir12.astype(np.float32)
+        swir22 = swir22.astype(np.float32)
 
-aewi_1_b = binarize_mask(aewi_1,threshold)
-aewi_2_b = binarize_mask(aewi_2,threshold)
+        swir1,swir12 = same_resize(swir1,swir12)
+        swir2,swir22 = same_resize(swir2,swir22)
 
-# visualize(aewi_1_b,gray=True)
-# visualize(aewi_2_b,gray=True)
+    green_band = f'{filepath_1}/band3.TIF'
+    green2_band = f'{filepath_2}/band3.TIF'
+    nir_band = f'{filepath_1}/band5.TIF'
+    nir2_band = f'{filepath_2}/band5.TIF'
 
+    green = open_image(green_band)
+    green2 = open_image(green2_band)
 
-diff_image = classify_image(aewi_1_b,aewi_2_b)
+    nir = open_image(nir_band)
+    nir2 = open_image(nir2_band)
+
+    green = green.astype(np.float32)
+    nir = nir.astype(np.float32)
+    green2 = green2.astype(np.float32)
+    nir2 = nir2.astype(np.float32)
+
+    green,green2 = same_resize(green,green2)
+    nir,nir2 = same_resize(nir,nir2)
+
+    if index==0:
+        img1 = compute_ndwi(green, nir)
+        img2 = compute_ndwi(green2, nir2)
+    elif index==1:
+        img1 = compute_aewi(green, nir, swir1, swir2)
+        img2 = compute_aewi(green2, nir2, swir12, swir22)
+
+    img1_b = binarize_mask(img1,threshold)
+    img2_b = binarize_mask(img2,threshold)
+
+    diff_image = classify_image(img1_b,img2_b)
+
+if __name__ == '__main__':
+    if len(sys.argv) != 5:
+        print("Invalid number of arguments. Please provide 4 arguments: filepath_1, filepath_2, index, threshold.")
+        sys.exit(1)
+
+    filepath_1 = sys.argv[1]
+    filepath_2 = sys.argv[2]
+    index = int(sys.argv[3])
+    threshold = float(sys.argv[4])
+
+    main(filepath_1, filepath_2, index, threshold)
 
