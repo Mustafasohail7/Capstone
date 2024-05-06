@@ -1,0 +1,4 @@
+band3 range: 0 to 28779
+band5 range: 0 to 35360
+band3_2 range: 0 to 18965
+band5_2 range: 0 to 20435
