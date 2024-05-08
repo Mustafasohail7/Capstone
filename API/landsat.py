@@ -19,6 +19,9 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,band_names):
     # Initialize a new API instance and get an access key
     xplorer = API("MurtazaAliKhokhar", "fLZEwWdaE|e78_S")
 
+    if edate:
+        findScenes(xplorer,lat,lon,edate,1)
+
     # Search for Landsat TM scenes3 
     scenes = xplorer.search(
         dataset='landsat_ot_c2_l2',
@@ -118,6 +121,28 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,band_names):
 
     returnMessage['success'] = True
     return returnMessage
+
+def findScenes(xplorer,lat,lon,date,num_scenes):
+
+    scenes = xplorer.search(
+        dataset='landsat_ot_c2_l2',
+        latitude=lat,
+        longitude=lon,
+        start_date=date,
+        end_date=date,
+        max_cloud_cover=10
+    )
+
+    print(f"{len(scenes)} scenes found.")
+
+    # latest_date = datetime.datetime.min
+    # latest_scene = None
+    # for scene in scenes:
+    #     if scene['date_product_generated'] > latest_date:
+    #         latest_date = scene['date_product_generated']
+    #         latest_scene = [scene]
+
+    # return latest_scene
 
 def dprint(*args):
     print(*args)

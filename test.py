@@ -1,17 +1,9 @@
-import pickle
-import os
+import rasterio
 
-# Assuming you have saved the centerlines as 'centerlines.pkl'
-input_path = "centerlines.pkl"
+def open_image(image_path):
+    with rasterio.open(image_path) as src:
+        image = src.read(1)
+        meta = src.meta
+    return image, meta
 
-# Load the centerlines array from the pickle file
-with open(input_path, 'rb') as f:
-    centerlines = pickle.load(f)
-
-a = 0
-for i in centerlines:
-    for j in i:
-        if j!=False:
-            a+=1
-
-print(a)
+a, a_meta = open_image('shifted_and_padded_image.tif')
