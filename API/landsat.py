@@ -1,12 +1,12 @@
 from utils import utils 
-import datetime
+from datetime import datetime, timedelta
 import requests
 import os
 from landsatxplore.api import API
 
 download_directory = ("downloads/{image_name}")
 
-def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,band_names):
+def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
 
     returnMessage = {
         'success':False,
@@ -19,29 +19,18 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,band_names):
     # Initialize a new API instance and get an access key
     xplorer = API("MurtazaAliKhokhar", "fLZEwWdaE|e78_S")
 
+    scenes = []
+
+    num_scenes = 2
+
     if edate:
-        findScenes(xplorer,lat,lon,edate,1)
+        print("yes edate")
+        num_scenes = 1
+        scene = findScenes(xplorer,lat,lon,edate,num_scenes)
+        scenes.extend(scene)
 
-    # Search for Landsat TM scenes3 
-    scenes = xplorer.search(
-        dataset='landsat_ot_c2_l2',
-        latitude=lat,
-        longitude=lon,
-        start_date=sdate,
-        end_date=edate,
-        max_cloud_cover=10
-    )
-
-    print(f"{len(scenes)} scenes found.")
-
-    latest_date = datetime.datetime.min
-    latest_scene = None
-    for scene in scenes:
-        if scene['date_product_generated'] > latest_date:
-            latest_date = scene['date_product_generated']
-            latest_scene = [scene]
-
-    dprint("date chosen",latest_date)
+    scene = findScenes(xplorer,lat,lon,sdate,num_scenes)
+    scenes.extend(scene)
 
     sceneIds = []
     band_names_tif = []
@@ -124,25 +113,30 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,band_names):
 
 def findScenes(xplorer,lat,lon,date,num_scenes):
 
-    scenes = xplorer.search(
-        dataset='landsat_ot_c2_l2',
-        latitude=lat,
-        longitude=lon,
-        start_date=date,
-        end_date=date,
-        max_cloud_cover=10
-    )
+    # print("trying to find scene for",date)
 
-    print(f"{len(scenes)} scenes found.")
+    scenes = []
 
-    # latest_date = datetime.datetime.min
-    # latest_scene = None
-    # for scene in scenes:
-    #     if scene['date_product_generated'] > latest_date:
-    #         latest_date = scene['date_product_generated']
-    #         latest_scene = [scene]
+    sdate=date
 
-    # return latest_scene
+    while len(scenes)<num_scenes:
+        scenes = xplorer.search(
+            dataset='landsat_ot_c2_l2',
+            latitude=lat,
+            longitude=lon,
+            start_date=sdate,
+            end_date=date,
+            max_cloud_cover=10
+        )
+        sdate = datetime.strptime(sdate, '%Y-%m-%d')
+        sdate = sdate - timedelta(days=1)
+        sdate = sdate.strftime('%Y-%m-%d')
+        print("changed to",sdate)
+
+    # print("lets see our luck")
+
+    # print(f"{len(scenes)} scenes found.")
+    return scenes
 
 def dprint(*args):
     print(*args)
