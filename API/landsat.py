@@ -24,7 +24,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
     num_scenes = 2
 
     if edate:
-        print("yes edate")
+        # print("yes edate")
         num_scenes = 1
         scene = findScenes(xplorer,lat,lon,edate,num_scenes)
         scenes.extend(scene)
@@ -32,14 +32,20 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
     scene = findScenes(xplorer,lat,lon,sdate,num_scenes)
     scenes.extend(scene)
 
+    scene1_date = scenes[0]['acquisition_date'].strftime('%Y-%m-%d')
+    scene2_date = scenes[1]['acquisition_date'].strftime('%Y-%m-%d')
+    dprint("First Scene Acquired for",scene1_date)
+    dprint("Second Scene Acquired for",scene2_date)
+
     sceneIds = []
     band_names_tif = []
+    band_names = ['3','5']
     for bn in band_names:
         string = "_SR_B"+bn+"_TIF"
         band_names_tif.append(string)
     # band_names_tif = ["_SR_B3_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
     #band_names_tif = ["_QA_PIXEL_TIF","_QA_RADSAT_TIF","_SR_B1_TIF","_SR_B2_TIF","_SR_B3_TIF","_SR_B4_TIF","_SR_B5_TIF","_SR_B6_TIF","_SR_B7_TIF"]
-    for scene in latest_scene:
+    for scene in scenes:
         # print(scene)
         for band in band_names_tif:
             scene_name = "L2SR_"+scene['display_id']+band
@@ -69,7 +75,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
 
     dprint("Products available to download: ", len(downloads))
 
-    label = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    label = datetime.now().strftime("%Y%m%d%H%M%S")
     requestResults = api.downloadRequest(downloads, label)
     if not requestResults['availableDownloads']:
         returnMessage['error'] = (2,"No download options found")
@@ -114,6 +120,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
 def findScenes(xplorer,lat,lon,date,num_scenes):
 
     # print("trying to find scene for",date)
+    # print("scenes num",num_scenes)
 
     scenes = []
 
@@ -131,7 +138,7 @@ def findScenes(xplorer,lat,lon,date,num_scenes):
         sdate = datetime.strptime(sdate, '%Y-%m-%d')
         sdate = sdate - timedelta(days=1)
         sdate = sdate.strftime('%Y-%m-%d')
-        print("changed to",sdate)
+        # print("changed to",sdate)
 
     # print("lets see our luck")
 
