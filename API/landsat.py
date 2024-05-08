@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import requests
 import os
 from landsatxplore.api import API
+import shutil
 
 download_directory = ("downloads/{image_name}")
 
@@ -12,6 +13,15 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
         'success':False,
         'error':(None,"")
     }
+
+    directory_to_delete = 'downloads'
+    try:
+        shutil.rmtree(directory_to_delete)
+        print("Directory", directory_to_delete, "successfully deleted.")
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print("An error occurred:", e)
 
     api = utils(baseUrl,datasetName)
     api.generateKey("musutfa","Playstore123$")
@@ -40,6 +50,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
     sceneIds = []
     band_names_tif = []
     band_names = ['3','5']
+    # band_names = ['7']
     for bn in band_names:
         string = "_SR_B"+bn+"_TIF"
         band_names_tif.append(string)
@@ -133,7 +144,7 @@ def findScenes(xplorer,lat,lon,date,num_scenes):
             longitude=lon,
             start_date=sdate,
             end_date=date,
-            max_cloud_cover=10
+            max_cloud_cover=25
         )
         sdate = datetime.strptime(sdate, '%Y-%m-%d')
         sdate = sdate - timedelta(days=1)
