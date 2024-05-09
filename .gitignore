@@ -3,6 +3,8 @@
 graph-width/
 output/
 downloads/
+band_data/
+band_data_test/
 test_notebook/
 /API/data/
 **/*.TIF
