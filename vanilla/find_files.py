@@ -16,9 +16,8 @@ def find_file_paths(base_dir):
     else:
         return None
 
-def find():
+def find(base_dir=''):
     # Assuming your notebook is in '/content'
-    base_dir = ''
     file_paths = find_file_paths(base_dir)
     if file_paths:
         print("Found two subdirectories in the downloads folder.")
