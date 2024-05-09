@@ -50,9 +50,12 @@ def main(filepath_1,filepath_2,index,threshold,notebook):
         img1 = compute_aewi(green, nir, swir1, swir2)
         img2 = compute_aewi(green2, nir2, swir12, swir22)
 
+    # visualize(img1,"NDWI of img1",gray=True)
+    # visualize(img2,"NDWI of img2",gray=True)
+
     # print(img1.shape)
     # visualize(img1,"NDWI before rolling",gray=True,save=True)
-    img2 = rollover_image(img2,60)
+    # img2 = rollover_image(img2,60)
     # print(img1.shape)
     # visualize(img1,"NDWI after rolling",gray=True,save=True)
 
@@ -60,6 +63,9 @@ def main(filepath_1,filepath_2,index,threshold,notebook):
     img1_b = binarize_mask(img1,threshold)
     # visualize(img1_b,gray=True)
     img2_b = binarize_mask(img2,threshold)
+
+    # visualize(img1_b,"Binarized img1",gray=True)
+    # visualize(img2_b,"Binarized img2",gray=True)
 
     diff_image = classify_image(img1_b,img2_b,notebook)
 
@@ -80,7 +86,7 @@ if __name__ == '__main__':
     filepath_2 = sys.argv[2]
     index = int(sys.argv[3])
     threshold = float(sys.argv[4])
-    notebook = sys.argv[5] == 'True'
+    notebook = bool(sys.argv[5]) if len(sys.argv) > 5 else False
 
     main(filepath_1, filepath_2, index, threshold,notebook)
 
