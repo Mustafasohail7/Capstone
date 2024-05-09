@@ -163,14 +163,14 @@ def save_image(image_path, image_data, meta):
 def quantify_water_change(diff_image):
     # Count the number of pixels classified as water added (green)
     water_added_count = np.sum(diff_image == 0)
-    water_added_count = (water_added_count*30*30)
+    water_added_count = (water_added_count*30*30)/(1000*1000)
 
     # Count the number of pixels classified as water removed (red)
     water_removed_count = np.sum(diff_image == 1)
-    water_removed_count = (water_removed_count*30*30)
+    water_removed_count = (water_removed_count*30*30)/(1000*1000)
 
     # Calculate the net change in water by subtracting water_removed_count from water_added_count
-    net_water_change = water_removed_count - water_added_count
+    net_water_change =  water_added_count - water_removed_count
 
     return net_water_change
 
