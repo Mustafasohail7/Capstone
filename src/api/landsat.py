@@ -44,13 +44,13 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover):
         )
         print(len(scenes),"found")
     else:
-        if edate:
+        if edate!='':
             # print("yes edate")
             num_scenes = 1
             scene = findScenes(xplorer,lat,lon,edate,num_scenes,cloud_cover)
             scenes.extend(scene)
 
-        if not sdate:
+        if sdate=='':
             sdate = datetime.now().strftime('%Y-%m-%d')
 
         scene = findScenes(xplorer,lat,lon,sdate,num_scenes,cloud_cover)

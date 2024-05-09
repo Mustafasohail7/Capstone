@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import sys
-import pickle
 
 def compute_ndwi(green, nir):
     """
@@ -99,7 +98,7 @@ def classify_image(ndwi1,ndwi2,display):
     # print(f"Original water: {original_water}")
     # print(f"New water: {new_water}")
 
-    colors = ['red', 'green', 'yellow', 'blue']  # Blue, Green, Red, Yellow
+    colors = ['red', 'green', 'black', 'blue']  # Blue, Green, Red, Yellow
     # colors = [(1, 1, 1), (0, 0, 0), (0, 0, 0), (0, 0, 0)]  # Blue, Green, Black, Red
     cmap = ListedColormap(colors)
 
@@ -107,16 +106,14 @@ def classify_image(ndwi1,ndwi2,display):
     mask[diff_image == 2] = 1
     # visualize(mask,"Water change",gray=True)
 
-    plt.figure()
+    fig = plt.figure()
     plt.imshow(diff_image, cmap=cmap)
     plt.colorbar(ticks=[0, 1, 2, 3], label='Change Type')
-    plt.title('Change Detection: 1-Removed, 2-Added, 3-No Change, 4-Water Remains')
+    plt.title('Change Detection: 0-Added, 1-Removed, 2-No Change, 3-Water Remains')
     if display:
         plt.savefig('difference.jpg')
     else:
         plt.show()
-        # Convert the plot to an interactive HTML
-        pickle.dump(fig, open('FigureObject.fig.pickle', 'wb'))
         
 
     return diff_image

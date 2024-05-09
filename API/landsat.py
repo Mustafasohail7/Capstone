@@ -7,7 +7,7 @@ import shutil
 
 download_directory = ("downloads/{image_name}")
 
-def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover):
+def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,method):
 
     returnMessage = {
         'success':False,
@@ -64,6 +64,9 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover):
     sceneIds = []
     band_names_tif = []
     band_names = ['3','5']
+    if method == 'AWEI':
+        band_names.append('6')
+        band_names.append('7')
     # band_names = ['7']
     for bn in band_names:
         string = "_SR_B"+bn+"_TIF"
