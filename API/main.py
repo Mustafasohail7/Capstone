@@ -2,7 +2,7 @@ from landsat import Landsat
 import sys
 import datetime
 
-def main(file_path,cloud_cover,start_date,end_date,download_all):
+def main(file_path,cloud_cover,start_date='',end_date='',download_all=False):
 
     baseUrl = "https://m2m.cr.usgs.gov/api/api/json/stable/"
     datasetName = "landsat_band_files_c2_l2"
