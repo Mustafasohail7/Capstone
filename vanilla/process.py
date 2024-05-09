@@ -5,7 +5,7 @@ from main_helper import *
 
 def process(filepath_1,filepath_2,index,threshold,notebook=False):
     # blue_band = 2 
-    if index==1:
+    if index=="AWEI":
         swir1_band = f'{filepath_1}/B6.TIF'
         swir12_band = f'{filepath_2}/B6.TIF'
         swir2_band = f'{filepath_1}/B7.TIF'
@@ -43,10 +43,10 @@ def process(filepath_1,filepath_2,index,threshold,notebook=False):
     green,green2 = same_resize(green,green2)
     nir,nir2 = same_resize(nir,nir2)
 
-    if index==0:
+    if index=="NDWI":
         img1 = compute_ndwi(green, nir)
         img2 = compute_ndwi(green2, nir2)
-    elif index==1:
+    elif index=="AWEI":
         img1 = compute_aewi(green, nir, swir1, swir2)
         img2 = compute_aewi(green2, nir2, swir12, swir22)
 
