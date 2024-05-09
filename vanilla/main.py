@@ -3,7 +3,7 @@ import sys
 
 from main_helper import *
 
-def main(filepath_1,filepath_2,index,threshold,notebook):
+def main(filepath_1,filepath_2,index,threshold,notebook=False):
     # blue_band = 2 
     if index==1:
         swir1_band = f'{filepath_1}/B6.TIF'
