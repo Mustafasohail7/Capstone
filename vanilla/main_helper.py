@@ -59,7 +59,7 @@ def visualize(ndwi,title,gray=False,save=False):
     if save:
         plt.savefig(f'images/{title}.jpg')
     else:
-        # plt.show()
+        plt.show()
         pass
 
 
@@ -111,11 +111,11 @@ def classify_image(ndwi1,ndwi2,display):
     plt.imshow(diff_image, cmap=cmap)
     plt.colorbar(ticks=[0, 1, 2, 3], label='Change Type')
     plt.title('Change Detection: 1-Removed, 2-Added, 3-No Change, 4-Water Remains')
-    if not display:
-        plt.show()
-        pass
-    else:
+    if display:
         plt.savefig('difference.jpg')
+    else:
+        plt.show()
+        
 
     return diff_image
 
