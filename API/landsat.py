@@ -7,7 +7,7 @@ import shutil
 
 download_directory = ("downloads/{image_name}")
 
-def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all):
+def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover):
 
     returnMessage = {
         'success':False,
@@ -40,17 +40,17 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all):
             longitude=lon,
             start_date=sdate,
             end_date=edate,
-            max_cloud_cover=25
+            max_cloud_cover=cloud_cover
         )
         print(len(scenes),"found")
     else:
         if edate:
             # print("yes edate")
             num_scenes = 1
-            scene = findScenes(xplorer,lat,lon,edate,num_scenes)
+            scene = findScenes(xplorer,lat,lon,edate,num_scenes,cloud_cover)
             scenes.extend(scene)
 
-        scene = findScenes(xplorer,lat,lon,sdate,num_scenes)
+        scene = findScenes(xplorer,lat,lon,sdate,num_scenes,cloud_cover)
         scenes.extend(scene)
 
         scene1_date = scenes[0]['acquisition_date'].strftime('%Y-%m-%d')
@@ -139,7 +139,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all):
     returnMessage['success'] = True
     return returnMessage
 
-def findScenes(xplorer,lat,lon,date,num_scenes):
+def findScenes(xplorer,lat,lon,date,num_scenes,cloud_cover):
 
     # print("trying to find scene for",date)
     # print("scenes num",num_scenes)
@@ -155,7 +155,7 @@ def findScenes(xplorer,lat,lon,date,num_scenes):
             longitude=lon,
             start_date=sdate,
             end_date=date,
-            max_cloud_cover=25
+            max_cloud_cover=cloud_cover
         )
         sdate = datetime.strptime(sdate, '%Y-%m-%d')
         sdate = sdate - timedelta(days=1)
