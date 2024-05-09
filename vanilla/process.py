@@ -75,7 +75,7 @@ def process(filepath_1,filepath_2,index,threshold,notebook=False):
     
     net_water_change = net_water_change / 1000
 
-    print(f"Net water change: {net_water_change} m^2")
+    print(f"Net water change: {net_water_change} km^2")
 
 if __name__ == '__main__':
     if len(sys.argv) < 5:
