@@ -7,7 +7,7 @@ import shutil
 
 download_directory = ("downloads/{image_name}")
 
-def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
+def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all):
 
     returnMessage = {
         'success':False,
@@ -33,19 +33,30 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate):
 
     num_scenes = 2
 
-    if edate:
-        # print("yes edate")
-        num_scenes = 1
-        scene = findScenes(xplorer,lat,lon,edate,num_scenes)
+    if download_all:
+        scenes = xplorer.search(
+            dataset='landsat_ot_c2_l2',
+            latitude=lat,
+            longitude=lon,
+            start_date=sdate,
+            end_date=edate,
+            max_cloud_cover=25
+        )
+        print(len(scenes),"found")
+    else:
+        if edate:
+            # print("yes edate")
+            num_scenes = 1
+            scene = findScenes(xplorer,lat,lon,edate,num_scenes)
+            scenes.extend(scene)
+
+        scene = findScenes(xplorer,lat,lon,sdate,num_scenes)
         scenes.extend(scene)
 
-    scene = findScenes(xplorer,lat,lon,sdate,num_scenes)
-    scenes.extend(scene)
-
-    scene1_date = scenes[0]['acquisition_date'].strftime('%Y-%m-%d')
-    scene2_date = scenes[1]['acquisition_date'].strftime('%Y-%m-%d')
-    dprint("First Scene Acquired for",scene1_date)
-    dprint("Second Scene Acquired for",scene2_date)
+        scene1_date = scenes[0]['acquisition_date'].strftime('%Y-%m-%d')
+        scene2_date = scenes[1]['acquisition_date'].strftime('%Y-%m-%d')
+        dprint("First Scene Acquired for",scene1_date)
+        dprint("Second Scene Acquired for",scene2_date)
 
     sceneIds = []
     band_names_tif = []

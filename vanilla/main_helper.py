@@ -119,6 +119,21 @@ def classify_image(ndwi1,ndwi2,display):
 
     return diff_image
 
+def count_white_pixels(binary_mask):
+    """
+    Count the number of white pixels in the binary mask.
+    
+    Parameters:
+    - binary_mask: Binary mask.
+    
+    Returns:
+    - count: Number of white pixels.
+    """
+    count = np.sum(binary_mask == 1)
+    count_scaled = count*30*30
+    count_scaled_km = count_scaled/(1000*1000)
+    return count_scaled_km
+
 def open_image(image_path):
     with rasterio.open(image_path) as src:
         image = src.read(1)
@@ -172,3 +187,30 @@ def visualize_band(img,band):
     plt.title('Water Added (Blue Pixels)')
     plt.axis('off')
     plt.show()
+
+import csv
+
+def write_to_csv_header(file_path, header):
+    """
+    Write the header to a CSV file in write mode.
+
+    Args:
+    - file_path: The path to the CSV file.
+    - header: A list containing the header fields.
+    """
+    with open(file_path, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(header)
+    # print("Header written to", file_path)
+
+def write_to_csv(file_path, data):
+    """
+    Append data to a CSV file.
+
+    Args:
+    - file_path: The path to the CSV file.
+    - data: A list containing the data to be written.
+    """
+    with open(file_path, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(data)
