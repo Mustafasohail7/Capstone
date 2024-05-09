@@ -16,7 +16,7 @@ def find_file_paths(base_dir):
     else:
         return None
 
-def main():
+def find():
     # Assuming your notebook is in '/content'
     base_dir = '/content'
     file_paths = find_file_paths(base_dir)

@@ -2,7 +2,7 @@ from utils import utils
 from landsatxplore.api import API
 
 coordinates = []
-file_path = 'API/co-ords.txt'
+file_path = 'API/testing_coords.txt'
 with open(file_path, 'r') as file:
     for line in file:
         parts = line.strip().split(',')
@@ -26,12 +26,12 @@ for i in range(len(coordinates)):
         dataset='landsat_ot_c2_l2',
         latitude=coordinates[i][0],
         longitude=coordinates[i][1],
-        start_date='2023-01-01',
-        end_date='2023-12-31',
+        start_date='2022-05-09',
+        end_date='2024-05-09',
         max_cloud_cover=25
     )
-    num_scenes.append(len(scenes))
+    print(f"{len(scenes)} scenes found.")
 
 srted = num_scenes.copy()
-print(num_scenes)
+# print(num_scenes)
 
