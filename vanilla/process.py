@@ -3,7 +3,7 @@ import sys
 
 from main_helper import *
 
-def main(filepath_1,filepath_2,index,threshold,notebook=False):
+def process(filepath_1,filepath_2,index,threshold,notebook=False):
     # blue_band = 2 
     if index==1:
         swir1_band = f'{filepath_1}/B6.TIF'
@@ -88,5 +88,5 @@ if __name__ == '__main__':
     threshold = float(sys.argv[4])
     notebook = bool(sys.argv[5]) if len(sys.argv) > 5 else False
 
-    main(filepath_1, filepath_2, index, threshold,notebook)
+    process(filepath_1, filepath_2, index, threshold,notebook)
 
