@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from rasterio.transform import from_origin
-from rasterio.enums import Resampling
+import os
 
 def compute_ndwi(green, nir):
     """
@@ -216,19 +216,25 @@ def write_to_csv(file_path, data):
         writer.writerow(data)
 
 
-def save_classified_image_to_tiff(classified_image, metadata, output_filename):
+def save_classified_image_to_tiff(classified_image, metadata, output_directory, output_filename):
     # Extract metadata parameters
     width = metadata['width']
     height = metadata['height']
     count = metadata['count']
     dtype = classified_image.dtype
 
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+
+    # Construct the full file path including the directory and filename
+    full_output_path = os.path.join(output_directory, output_filename)
+
     # Define georeferencing information
     transform = from_origin(metadata['transform'][2], metadata['transform'][5], metadata['transform'][0], metadata['transform'][4])
     crs = metadata['crs']
 
     # Write classified image to GeoTIFF file
-    with rasterio.open(output_filename, 'w', driver='GTiff', 
+    with rasterio.open(full_output_path, 'w', driver='GTiff', 
                        width=width, height=height,
                        count=count, dtype=dtype, transform=transform, crs=crs) as dst:
         dst.write(classified_image, 1)

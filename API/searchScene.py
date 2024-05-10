@@ -1,6 +1,7 @@
 from landsat import Landsat
 import sys
 import datetime
+import shutil
 
 def searchScene(file_path,cloud_cover,method='NDWI',start_date='',end_date='',download_all=False):
 
@@ -27,6 +28,15 @@ def searchScene(file_path,cloud_cover,method='NDWI',start_date='',end_date='',do
                 except ValueError:  # In case the conversion to float fails
                     print(f"Could not convert line to floats: {line.strip()}")
     #print(coordinates)
+
+    directory_to_delete = 'downloads'
+    try:
+        shutil.rmtree(directory_to_delete)
+        print("Directory", directory_to_delete, "successfully deleted.")
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print("An error occurred:", e)
 
     for i in range(len(coordinates)):
         failed = []
@@ -62,4 +72,4 @@ if __name__ == "__main__":
     start_date = sys.argv[3] if len(sys.argv) > 3 else datetime.date.today().strftime('%Y-%m-%d')
     end_date = sys.argv[4] if len(sys.argv) > 4 else ''
     download_all = sys.argv[5] if len(sys.argv) > 5 else False
-    searchScene(file_path,cloud_cover,start_date,end_date,download_all)
+    searchScene(file_path,cloud_cover,start_date=start_date,end_date=end_date,download_all=download_all)

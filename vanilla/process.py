@@ -1,9 +1,20 @@
 import numpy as np
 import sys
+import os
 
 from main_helper import *
 
 def process(filepath_1,filepath_2,index,threshold,notebook=False):
+
+    directory = "outputs"
+    scene_id = filepath_1.split('/')[1]
+    # dir = directory.format(scene_id=scene_id)
+
+    if not os.path.exists('outputs'):
+        os.makedirs('outputs')
+
+    print("saving in",dir)
+
     # blue_band = 2 
     if index=="AWEI":
         swir1_band = f'{filepath_1}/B6.TIF'
@@ -69,7 +80,11 @@ def process(filepath_1,filepath_2,index,threshold,notebook=False):
 
     diff_image = classify_image(img1_b,img2_b,notebook)
 
-    
+    meta_data = read_metadata(green_band)
+
+    save_classified_image_to_tiff(diff_image,meta_data,directory,f"{scene_id}.TIF")
+
+    print("file saved")
 
     net_water_change = quantify_water_change(diff_image)
     

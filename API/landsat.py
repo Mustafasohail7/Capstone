@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import requests
 import os
 from landsatxplore.api import API
-import shutil
 
 download_directory = ("downloads/{scene_id}/{date}")
 
@@ -13,15 +12,6 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,met
         'success':False,
         'error':(None,"")
     }
-
-    directory_to_delete = 'downloads'
-    try:
-        shutil.rmtree(directory_to_delete)
-        print("Directory", directory_to_delete, "successfully deleted.")
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print("An error occurred:", e)
 
     api = utils(baseUrl,datasetName)
     api.generateKey("musutfa","Playstore123$")
@@ -180,7 +170,7 @@ def dprint(*args):
 def downloadFile(url, name):
     
     n = name.split('_')
-    short_name = '_'.join(n[1:4])
+    short_name = n[3]
     date = n[5]
 
     dir = download_directory.format(scene_id=short_name,date=date)

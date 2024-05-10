@@ -11,8 +11,13 @@ def find_subdirectories(parent_dir):
 def find_file_paths(base_dir):
     downloads_dir = os.path.join(base_dir, 'downloads')
     subdirectories = find_subdirectories(downloads_dir)
-    if len(subdirectories) >= 2:
-        return subdirectories[:2]
+    directories = []
+    for i in range(len(subdirectories)):
+        sub_downloads_dir = os.path.join(base_dir, subdirectories[i])
+        subsubdirectories = find_subdirectories(sub_downloads_dir)
+        directories.extend(subsubdirectories)
+    if len(directories) >= 2:
+        return directories
     else:
         return None
 
@@ -20,7 +25,7 @@ def find(base_dir=''):
     # Assuming your notebook is in '/content'
     file_paths = find_file_paths(base_dir)
     if file_paths:
-        print("Found two subdirectories in the downloads folder.")
+        print(f"Found {len(file_paths)} subdirectories in the downloads folder.")
     else:
         print("Couldn't find two subdirectories in the downloads folder.")
 
