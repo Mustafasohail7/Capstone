@@ -2,7 +2,8 @@ import rasterio
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
-import sys
+from rasterio.transform import from_origin
+from rasterio.enums import Resampling
 
 def compute_ndwi(green, nir):
     """
@@ -106,7 +107,7 @@ def classify_image(ndwi1,ndwi2,display):
     mask[diff_image == 2] = 1
     # visualize(mask,"Water change",gray=True)
 
-    fig = plt.figure()
+    plt.figure()
     plt.imshow(diff_image, cmap=cmap)
     plt.colorbar(ticks=[0, 1, 2, 3], label='Change Type')
     plt.title('Change Detection: 0-Added, 1-Removed, 2-No Change, 3-Water Remains')
@@ -213,3 +214,37 @@ def write_to_csv(file_path, data):
     with open(file_path, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(data)
+
+
+def save_classified_image_to_tiff(classified_image, metadata, output_filename):
+    # Extract metadata parameters
+    width = metadata['width']
+    height = metadata['height']
+    count = metadata['count']
+    dtype = classified_image.dtype
+
+    # Define georeferencing information
+    transform = from_origin(metadata['transform'][2], metadata['transform'][5], metadata['transform'][0], metadata['transform'][4])
+    crs = metadata['crs']
+
+    # Write classified image to GeoTIFF file
+    with rasterio.open(output_filename, 'w', driver='GTiff', 
+                       width=width, height=height,
+                       count=count, dtype=dtype, transform=transform, crs=crs) as dst:
+        dst.write(classified_image, 1)
+
+def read_metadata(image):
+    with rasterio.open(image) as src:
+        metadata = src.meta
+    return metadata
+
+
+def get_pixel_value_range(image):
+    # Read the entire raster data
+    raster_data = image
+
+    # Calculate the minimum and maximum pixel values
+    min_value = raster_data.min()
+    max_value = raster_data.max()
+
+    return min_value, max_value

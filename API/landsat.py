@@ -5,7 +5,7 @@ import os
 from landsatxplore.api import API
 import shutil
 
-download_directory = ("downloads/{image_name}")
+download_directory = ("downloads/{scene_id}/{date}")
 
 def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,method):
 
@@ -180,9 +180,10 @@ def dprint(*args):
 def downloadFile(url, name):
     
     n = name.split('_')
-    short_name = '_'.join(n[1:8])
+    short_name = '_'.join(n[1:4])
+    date = n[5]
 
-    dir = download_directory.format(image_name=short_name)
+    dir = download_directory.format(scene_id=short_name,date=date)
 
     if not os.path.exists(dir):
         os.makedirs(dir)
