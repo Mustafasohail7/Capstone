@@ -10,7 +10,8 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,met
 
     returnMessage = {
         'success':False,
-        'error':(None,"")
+        'error':(None,""),
+        'date':None
     }
 
     api = utils(baseUrl,datasetName)
@@ -38,7 +39,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,met
         print(len(scenes),"scenes found")
     else:
         if edate!='':
-            # print("yes edate")
+            print("no edate")
             num_scenes = 1
             scene = findScenes(xplorer,lat,lon,edate,num_scenes,cloud_cover)
             scenes.extend(scene)
@@ -136,6 +137,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,met
                 downloaded = downloadFile(url,i)
 
     returnMessage['success'] = True
+    returnMessage['date'] = scene2_date
     return returnMessage
 
 def findScenes(xplorer,lat,lon,date,num_scenes,cloud_cover):
@@ -146,6 +148,8 @@ def findScenes(xplorer,lat,lon,date,num_scenes,cloud_cover):
     scenes = []
 
     sdate=date
+
+    print("requesting for",sdate)
     
 
     while len(scenes)<num_scenes:

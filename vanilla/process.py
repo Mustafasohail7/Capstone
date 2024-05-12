@@ -82,9 +82,9 @@ def process(filepath_1,filepath_2,index,threshold,notebook=False):
 
     meta_data = read_metadata(green_band)
 
-    save_classified_image_to_tiff(diff_image,meta_data,directory,f"{scene_id}.TIF")
+    # save_classified_image_to_tiff(diff_image,meta_data,directory,f"{scene_id}.TIF")
 
-    print("file saved")
+    # print("file saved")
 
     net_water_change = quantify_water_change(diff_image)
     

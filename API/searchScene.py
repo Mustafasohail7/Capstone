@@ -4,6 +4,7 @@ import datetime
 import shutil
 
 def searchScene(file_path,cloud_cover,method='NDWI',start_date='',end_date='',download_all=False):
+    print('start date received',start_date)
 
     baseUrl = "https://m2m.cr.usgs.gov/api/api/json/stable/"
     datasetName = "landsat_band_files_c2_l2"
@@ -56,6 +57,8 @@ def searchScene(file_path,cloud_cover,method='NDWI',start_date='',end_date='',do
 
         if not landsat['success']:             
             print(landsat['error'][1])
+        else:
+            return landsat['date']
 
     if len(failed)>0:
         print("Failed coordinates:",failed)
