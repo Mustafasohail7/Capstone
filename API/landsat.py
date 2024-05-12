@@ -24,6 +24,9 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,met
     num_scenes = 2
 
     if download_all:
+        print("sending",sdate,edate)
+        print(type(sdate))
+        print(type(edate))
         scenes = xplorer.search(
             dataset='landsat_ot_c2_l2',
             latitude=lat,
@@ -32,7 +35,7 @@ def Landsat(baseUrl,datasetName,lat,lon,sdate,edate,download_all,cloud_cover,met
             end_date=edate,
             max_cloud_cover=cloud_cover
         )
-        print(len(scenes),"found")
+        print(len(scenes),"scenes found")
     else:
         if edate!='':
             # print("yes edate")
@@ -143,8 +146,12 @@ def findScenes(xplorer,lat,lon,date,num_scenes,cloud_cover):
     scenes = []
 
     sdate=date
+    
 
     while len(scenes)<num_scenes:
+        # print("sending",sdate,date)
+        # print(type(sdate))
+        # print(type(date))
         scenes = xplorer.search(
             dataset='landsat_ot_c2_l2',
             latitude=lat,

@@ -7,13 +7,13 @@ from main_helper import *
 def process(filepath_1,filepath_2,index,threshold,notebook=False):
 
     directory = "outputs"
-    scene_id = filepath_1.split('/')[1]
+    scene_id = filepath_1.split('/')[2]
     # dir = directory.format(scene_id=scene_id)
 
     if not os.path.exists('outputs'):
         os.makedirs('outputs')
 
-    print("saving in",dir)
+    # print("saving in",dir)
 
     # blue_band = 2 
     if index=="AWEI":
@@ -89,6 +89,8 @@ def process(filepath_1,filepath_2,index,threshold,notebook=False):
     net_water_change = quantify_water_change(diff_image)
     
     net_water_change = net_water_change / 1000
+
+    write_to_csv('output.csv',[scene_id,net_water_change])
 
     print(f"Net water change: {net_water_change} km^2")
 

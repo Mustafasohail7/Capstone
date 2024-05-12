@@ -29,14 +29,14 @@ def searchScene(file_path,cloud_cover,method='NDWI',start_date='',end_date='',do
                     print(f"Could not convert line to floats: {line.strip()}")
     #print(coordinates)
 
-    directory_to_delete = 'downloads'
-    try:
-        shutil.rmtree(directory_to_delete)
-        print("Directory", directory_to_delete, "successfully deleted.")
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print("An error occurred:", e)
+    # directory_to_delete = 'downloads'
+    # try:
+    #     shutil.rmtree(directory_to_delete)
+    #     print("Directory", directory_to_delete, "successfully deleted.")
+    # except FileNotFoundError:
+    #     pass
+    # except Exception as e:
+    #     print("An error occurred:", e)
 
     for i in range(len(coordinates)):
         failed = []
